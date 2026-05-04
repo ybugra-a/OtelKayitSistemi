@@ -1,122 +1,117 @@
 """
-Uygulama stilleri - Modern lacivert tema
+Uygulama stilleri - Koyu tema (Stitch UI referansi)
 """
 
 MAIN_STYLE = """
-/* Genel */
+/* === GENEL === */
 QWidget {
     font-family: 'Segoe UI', Tahoma, Arial;
     font-size: 10pt;
-    color: #2c3e50;
+    color: #e2e8f0;
+    background-color: #0f1923;
 }
 
 QMainWindow {
-    background-color: #f0f2f5;
+    background-color: #0f1923;
 }
 
-/* Baslik */
+/* === HEADER === */
 #header {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-        stop:0 #1B3A6B, stop:1 #2563EB);
-    border-bottom: 2px solid #1a3060;
+    background-color: #0d1520;
+    border-bottom: 1px solid #1e2d3d;
 }
 
 #headerTitle {
-    font-size: 15pt;
+    font-size: 14pt;
     font-weight: bold;
-    color: white;
-    letter-spacing: 0.5px;
+    color: #f1f5f9;
 }
 
 #headerSubtitle {
     font-size: 9pt;
-    color: #93c5fd;
+    color: #64748b;
 }
 
-/* Tab Widget */
+/* === TAB WIDGET === */
 #mainTabs {
-    background-color: #f0f2f5;
+    background-color: #0f1923;
 }
 
 #mainTabs::pane {
     border: none;
-    background-color: #f0f2f5;
+    background-color: #0f1923;
 }
 
 #mainTabs QTabBar::tab {
-    background: #dde3ec;
-    color: #4a5568;
-    padding: 10px 20px;
+    background: transparent;
+    color: #64748b;
+    padding: 12px 24px;
     border: none;
     border-bottom: 3px solid transparent;
     font-size: 10pt;
     font-weight: 500;
-    margin-right: 2px;
+    margin-right: 4px;
 }
 
 #mainTabs QTabBar::tab:selected {
-    background: white;
-    color: #1B3A6B;
-    border-bottom: 3px solid #2563EB;
+    color: #f1f5f9;
+    border-bottom: 3px solid #22c55e;
     font-weight: bold;
 }
 
 #mainTabs QTabBar::tab:hover:!selected {
-    background: #e8edf5;
-    color: #1B3A6B;
+    color: #94a3b8;
+    border-bottom: 3px solid #2a3a4a;
 }
 
-/* Kartlar */
-QFrame[frameShape="1"], QFrame[frameShape="6"] {
-    background: white;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
-}
-
-/* Panel basliklar */
+/* === PANEL BASLIK === */
 #panelTitle {
-    font-size: 12pt;
+    font-size: 13pt;
     font-weight: bold;
-    color: #1B3A6B;
-    padding: 8px 0 4px 0;
+    color: #f1f5f9;
+    padding: 4px 0;
 }
 
-#sectionTitle {
-    font-size: 10pt;
-    font-weight: bold;
-    color: #374151;
-    margin-top: 8px;
+/* === KARTLAR === */
+QFrame[frameShape="1"], QFrame[frameShape="6"] {
+    background-color: #1a2635;
+    border-radius: 12px;
+    border: 1px solid #1e2d3d;
 }
 
-/* Form alanlari */
+/* === FORM ALANLARI === */
 QLineEdit, QComboBox, QDateEdit, QDoubleSpinBox {
-    background: white;
-    border: 1.5px solid #cbd5e1;
-    border-radius: 6px;
-    padding: 7px 10px;
+    background-color: #1a2635;
+    border: 1.5px solid #2a3a4a;
+    border-radius: 8px;
+    padding: 8px 12px;
     font-size: 10pt;
-    color: #1e293b;
+    color: #e2e8f0;
     min-height: 22px;
 }
 
 QLineEdit:focus, QComboBox:focus, QDateEdit:focus, QDoubleSpinBox:focus {
-    border: 1.5px solid #2563EB;
-    background: #f8faff;
+    border: 1.5px solid #22c55e;
+    background-color: #1e2d3d;
 }
 
 QLineEdit:hover, QComboBox:hover {
-    border-color: #94a3b8;
+    border-color: #3a4a5a;
+}
+
+QLineEdit::placeholder {
+    color: #3a4a5a;
 }
 
 QLineEdit[readOnly="true"] {
-    background: #f8fafc;
-    color: #64748b;
+    background-color: #131f2e;
+    color: #475569;
 }
 
-/* ComboBox */
+/* === COMBOBOX === */
 QComboBox::drop-down {
     border: none;
-    width: 24px;
+    width: 28px;
 }
 
 QComboBox::down-arrow {
@@ -124,22 +119,28 @@ QComboBox::down-arrow {
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
     border-top: 6px solid #64748b;
-    margin-right: 5px;
+    margin-right: 8px;
 }
 
 QComboBox QAbstractItemView {
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    background: white;
-    selection-background-color: #dbeafe;
-    selection-color: #1e40af;
+    border: 1px solid #2a3a4a;
+    border-radius: 8px;
+    background-color: #1a2635;
+    selection-background-color: #22c55e22;
+    selection-color: #22c55e;
     padding: 4px;
+    outline: none;
 }
 
-/* Butonlar */
+QComboBox QAbstractItemView::item {
+    padding: 8px 12px;
+    color: #e2e8f0;
+}
+
+/* === BUTONLAR === */
 QPushButton {
-    border-radius: 6px;
-    padding: 8px 18px;
+    border-radius: 8px;
+    padding: 9px 20px;
     font-weight: bold;
     font-size: 10pt;
     border: none;
@@ -147,111 +148,119 @@ QPushButton {
 }
 
 #btnKaydet {
-    background: #16a34a;
-    color: white;
+    background-color: #22c55e;
+    color: #0f1923;
 }
 
 #btnKaydet:hover {
-    background: #15803d;
+    background-color: #16a34a;
 }
 
 #btnKaydet:pressed {
-    background: #166534;
+    background-color: #15803d;
 }
 
 #btnTemizle {
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #cbd5e1;
+    background-color: #1e2d3d;
+    color: #94a3b8;
+    border: 1px solid #2a3a4a;
 }
 
 #btnTemizle:hover {
-    background: #e2e8f0;
+    background-color: #2a3a4a;
+    color: #e2e8f0;
 }
 
 #btnDuzenle {
-    background: #1d4ed8;
-    color: white;
-    padding: 5px 12px;
+    background-color: #1e2d3d;
+    color: #94a3b8;
+    border: 1px solid #2a3a4a;
+    padding: 6px 14px;
     font-size: 9pt;
-    min-height: 28px;
+    min-height: 30px;
 }
 
 #btnDuzenle:hover {
-    background: #1e40af;
+    background-color: #2a3a4a;
+    color: #e2e8f0;
 }
 
 #btnCikis {
-    background: #dc2626;
-    color: white;
-    padding: 5px 12px;
+    background-color: #1e2d3d;
+    color: #94a3b8;
+    border: 1px solid #2a3a4a;
+    padding: 6px 14px;
     font-size: 9pt;
-    min-height: 28px;
+    min-height: 30px;
 }
 
 #btnCikis:hover {
-    background: #b91c1c;
+    background-color: #dc262622;
+    color: #f87171;
+    border-color: #dc2626;
 }
 
 #btnEkle {
-    background: #0891b2;
-    color: white;
+    background-color: #22c55e;
+    color: #0f1923;
 }
 
 #btnEkle:hover {
-    background: #0e7490;
+    background-color: #16a34a;
 }
 
 #btnSil {
-    background: #ef4444;
-    color: white;
+    background-color: #1e2d3d;
+    color: #f87171;
+    border: 1px solid #dc2626;
 }
 
 #btnSil:hover {
-    background: #dc2626;
+    background-color: #dc262622;
 }
 
 #btnAra {
-    background: #7c3aed;
-    color: white;
+    background-color: #22c55e;
+    color: #0f1923;
 }
 
 #btnAra:hover {
-    background: #6d28d9;
+    background-color: #16a34a;
 }
 
 #btnYedekle {
-    background: #d97706;
-    color: white;
+    background-color: #1e2d3d;
+    color: #fbbf24;
+    border: 1px solid #d97706;
 }
 
 #btnYedekle:hover {
-    background: #b45309;
+    background-color: #d9770622;
 }
 
-/* Musteri kartlari */
+/* === MISAFIR KARTLARI === */
 #musteriKart {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
+    background-color: #1e2d3d;
+    border: 1px solid #2a3a4a;
+    border-radius: 12px;
     margin: 3px 2px;
-    padding: 10px;
+    padding: 12px;
 }
 
 #musteriKart:hover {
-    border-color: #93c5fd;
-    background: #f8faff;
+    border-color: #3a4a5a;
+    background-color: #22334a;
 }
 
 #musteriIsim {
     font-size: 11pt;
     font-weight: bold;
-    color: #1e3a8a;
+    color: #f1f5f9;
 }
 
 #musteriOda {
     font-size: 10pt;
-    color: #374151;
+    color: #94a3b8;
 }
 
 #musteriTarih {
@@ -261,80 +270,88 @@ QPushButton {
 
 #odemeUyari {
     font-size: 9pt;
-    color: #dc2626;
+    color: #fb923c;
     font-weight: bold;
+    background-color: #fb923c22;
+    border-radius: 4px;
+    padding: 2px 8px;
 }
 
 #odemeVar {
     font-size: 9pt;
-    color: #16a34a;
+    color: #22c55e;
+    font-weight: bold;
+    background-color: #22c55e22;
+    border-radius: 4px;
+    padding: 2px 8px;
 }
 
-/* Oda kartlari */
+/* === ODA KARTLARI === */
 #odaMusait {
-    background: #f0fdf4;
-    border: 1.5px solid #86efac;
-    border-radius: 8px;
+    background-color: #22c55e11;
+    border: 1.5px solid #22c55e44;
+    border-radius: 10px;
     padding: 8px;
 }
 
 #odaDolu {
-    background: #fff1f2;
-    border: 1.5px solid #fca5a5;
-    border-radius: 8px;
+    background-color: #ef444411;
+    border: 1.5px solid #ef444444;
+    border-radius: 10px;
     padding: 8px;
 }
 
 #odaNo {
     font-size: 14pt;
     font-weight: bold;
-    color: #1e293b;
+    color: #f1f5f9;
 }
 
 #odaDurumMusait {
-    color: #16a34a;
+    color: #22c55e;
     font-weight: bold;
 }
 
 #odaDurumDolu {
-    color: #dc2626;
+    color: #ef4444;
     font-weight: bold;
 }
 
-/* Tablo */
+/* === TABLO === */
 QTableWidget {
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    background: white;
-    gridline-color: #f1f5f9;
-    selection-background-color: #dbeafe;
-    selection-color: #1e40af;
+    border: 1px solid #1e2d3d;
+    border-radius: 10px;
+    background-color: #1a2635;
+    gridline-color: #1e2d3d;
+    selection-background-color: #22c55e22;
+    selection-color: #22c55e;
+    alternate-background-color: #1e2d3d;
 }
 
 QTableWidget::item {
-    padding: 6px 10px;
-    border-bottom: 1px solid #f1f5f9;
+    padding: 8px 10px;
+    border-bottom: 1px solid #1e2d3d;
+    color: #e2e8f0;
 }
 
 QTableWidget::item:selected {
-    background: #dbeafe;
-    color: #1e40af;
+    background-color: #22c55e22;
+    color: #22c55e;
 }
 
 QHeaderView::section {
-    background: #1B3A6B;
-    color: white;
-    padding: 8px 10px;
+    background-color: #131f2e;
+    color: #64748b;
+    padding: 10px;
     border: none;
+    border-bottom: 1px solid #1e2d3d;
     font-weight: bold;
     font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-QHeaderView::section:first {
-    border-radius: 8px 0 0 0;
-}
-
-/* Scroll area */
+/* === SCROLL === */
 QScrollArea {
     border: none;
     background: transparent;
@@ -342,107 +359,113 @@ QScrollArea {
 
 QScrollBar:vertical {
     border: none;
-    background: #f1f5f9;
-    width: 8px;
-    border-radius: 4px;
+    background: #131f2e;
+    width: 6px;
+    border-radius: 3px;
 }
 
 QScrollBar::handle:vertical {
-    background: #94a3b8;
-    border-radius: 4px;
+    background: #2a3a4a;
+    border-radius: 3px;
     min-height: 20px;
 }
 
 QScrollBar::handle:vertical:hover {
-    background: #64748b;
+    background: #3a4a5a;
 }
 
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
     height: 0;
 }
 
-/* Label */
-QLabel {
-    color: #374151;
-}
-
-/* Autocomplete popup */
+/* === LIST WIDGET (Autocomplete) === */
 QListWidget {
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    background: white;
+    border: 1px solid #2a3a4a;
+    border-radius: 8px;
+    background-color: #1a2635;
     font-size: 10pt;
+    color: #e2e8f0;
 }
 
 QListWidget::item {
-    padding: 6px 10px;
-    border-bottom: 1px solid #f1f5f9;
+    padding: 8px 12px;
+    border-bottom: 1px solid #1e2d3d;
 }
 
 QListWidget::item:selected, QListWidget::item:hover {
-    background: #dbeafe;
-    color: #1e40af;
+    background-color: #22c55e22;
+    color: #22c55e;
 }
 
-/* GroupBox */
+/* === GROUPBOX === */
 QGroupBox {
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    border: 1px solid #2a3a4a;
+    border-radius: 10px;
     margin-top: 12px;
     padding: 8px;
-    font-weight: bold;
-    color: #374151;
+    color: #94a3b8;
 }
 
 QGroupBox::title {
     subcontrol-origin: margin;
     subcontrol-position: top left;
     padding: 0 6px;
-    color: #1B3A6B;
+    color: #22c55e;
 }
 
-/* MessageBox */
+/* === MESSAGEBOX === */
 QMessageBox {
-    background: white;
+    background-color: #1a2635;
+    color: #e2e8f0;
+}
+
+QMessageBox QLabel {
+    color: #e2e8f0;
 }
 
 QMessageBox QPushButton {
     min-width: 80px;
-    background: #1d4ed8;
-    color: white;
+    background-color: #22c55e;
+    color: #0f1923;
+    border-radius: 6px;
+    padding: 6px 16px;
 }
 
-/* SpinBox */
+QMessageBox QPushButton:hover {
+    background-color: #16a34a;
+}
+
+/* === SPINBOX / DATEEDIT === */
 QDoubleSpinBox::up-button, QDoubleSpinBox::down-button {
-    width: 18px;
+    width: 20px;
     border: none;
-    background: #f1f5f9;
+    background-color: #2a3a4a;
 }
 
-/* DateEdit */
 QDateEdit::drop-down {
     border: none;
-    width: 24px;
+    width: 28px;
+    background-color: transparent;
 }
 
-/* Filtre alanlari */
+/* === FILTRE PANELI === */
 #filterPanel {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    background-color: #1a2635;
+    border: 1px solid #1e2d3d;
+    border-radius: 10px;
     padding: 8px;
 }
 
-/* Bos panel mesaji */
+/* === BOS PANEL === */
 #bosaMessaj {
-    color: #94a3b8;
+    color: #2a3a4a;
     font-size: 13pt;
 }
 
-/* Durum etiketleri */
+/* === DURUM ETIKETLERI === */
 #etiketAktif {
-    background: #dcfce7;
-    color: #166534;
+    background-color: #22c55e22;
+    color: #22c55e;
     border-radius: 4px;
     padding: 2px 8px;
     font-size: 9pt;
@@ -450,19 +473,25 @@ QDateEdit::drop-down {
 }
 
 #etiketCikis {
-    background: #fee2e2;
-    color: #991b1b;
+    background-color: #ef444422;
+    color: #ef4444;
     border-radius: 4px;
     padding: 2px 8px;
     font-size: 9pt;
     font-weight: bold;
 }
 
-/* Yedekleme paneli */
+/* === YEDEKLEME PANELI === */
 #backupInfo {
-    background: #fffbeb;
-    border: 1px solid #fde68a;
-    border-radius: 8px;
+    background-color: #1e2d3d;
+    border: 1px solid #2a3a4a;
+    border-radius: 10px;
     padding: 12px;
+}
+
+/* === LABEL === */
+QLabel {
+    color: #94a3b8;
+    background: transparent;
 }
 """

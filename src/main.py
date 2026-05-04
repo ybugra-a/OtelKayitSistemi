@@ -20,12 +20,22 @@ from ayarlar import Ayarlar
 from styles import MAIN_STYLE
 
 
+def get_icon_path():
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, "otel_icon.png")
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "otel_icon.png")
+
+
 class OtelKayitApp(QMainWindow):
     def __init__(self):
         super().__init__()
         self.data_manager = DataManager()
         self.setWindowTitle("Otel Kayit ve Oda Yonetim Sistemi")
         self.setMinimumSize(1280, 720)
+
+        icon_path = get_icon_path()
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
 
         self._setup_ui()
         self._check_backup_warning()
@@ -59,18 +69,21 @@ class OtelKayitApp(QMainWindow):
     def _create_header(self):
         header = QWidget()
         header.setObjectName("header")
-        header.setFixedHeight(60)
+        header.setFixedHeight(56)
         layout = QHBoxLayout(header)
-        layout.setContentsMargins(20, 0, 20, 0)
+        layout.setContentsMargins(24, 0, 24, 0)
+        layout.setSpacing(8)
 
-        title = QLabel("🏨  Otel Kayit ve Oda Yonetim Sistemi")
+        title_col = QVBoxLayout()
+        title_col.setSpacing(1)
+        title = QLabel("Otel Kayit ve Oda Yonetim Sistemi")
         title.setObjectName("headerTitle")
-        layout.addWidget(title)
-        layout.addStretch()
-
         subtitle = QLabel("Resepsiyon Yonetim Paneli")
         subtitle.setObjectName("headerSubtitle")
-        layout.addWidget(subtitle)
+        title_col.addWidget(title)
+        title_col.addWidget(subtitle)
+        layout.addLayout(title_col)
+        layout.addStretch()
 
         return header
 
@@ -156,6 +169,9 @@ def main():
     app.setApplicationName("Otel Kayit Sistemi")
     
     font = QFont("Segoe UI", 10)
+    icon_path = get_icon_path()
+    if os.path.exists(icon_path):
+        app.setWindowIcon(QIcon(icon_path))
     app.setFont(font)
 
     window = OtelKayitApp()
