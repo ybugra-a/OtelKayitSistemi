@@ -1,13 +1,8 @@
-# Otel Kayit ve Oda Yonetim Sistemi
-## Kurulum ve Derleme Kilavuzu
-
----
-
-## KLASOR YAPISI
-
-```
+Hotel Registration and Room Management System
+Installation and Compilation Guide
+FOLDER STRUCTURE
 OtelKayit/
-  src/                    ← Python kaynak kodlari
+  src/                    ← Python source codes
     main.py
     data_manager.py
     kayit_modulu.py
@@ -16,80 +11,78 @@ OtelKayit/
     arama_arsiv.py
     ayarlar.py
     styles.py
-  OtelKayit.spec          ← PyInstaller yapilandirmasi
-  setup.iss               ← Inno Setup kurulum scripti
-  build.bat               ← Otomatik derleme betigi
-  requirements.txt        ← Python bagimliliklar
-  README.md               ← Bu dosya
-```
+  OtelKayit.spec          ← PyInstaller configuration
+  setup.iss               ← Inno Setup installation script
+  build.bat               ← Automatic compilation script
+  requirements.txt        ← Python dependencies
+  README.md               ← This file
+STEP 1 - INSTALL PYTHON
+Go to https://python.org/downloads
 
----
+Click the "Download Python 3.x.x" button.
 
-## ADIM 1 - PYTHON KUR
+During installation, make sure to check the "Add Python to PATH" box.
 
-1. https://python.org/downloads adresine git
-2. "Download Python 3.x.x" butonuna tikla
-3. Kurulum sirasinda **"Add Python to PATH"** kutucugunu mutlaka isaretle
-4. Kurulumu tamamla
+Complete the installation.
 
-Kontrol: Komut satirinda `python --version` yazinca versiyon gormeli.
+Control: You should see the version number when you type python --version in the command prompt.
 
----
+STEP 2 - INSTALL INNO SETUP
+Go to https://jrsoftware.org/isdl.php
 
-## ADIM 2 - INNO SETUP KUR
+Download "Inno Setup 6.x.x".
 
-1. https://jrsoftware.org/isdl.php adresine git
-2. "Inno Setup 6.x.x" indir
-3. Varsayilan ayarlarla kur
+Install it with the default settings.
 
----
+STEP 3 - COMPILE (ONE-CLICK)
+Copy this folder to a location (e.g., C:\OtelKayitBuild\).
 
-## ADIM 3 - DERLE (TEK TIKLA)
+Double-click the build.bat file.
 
-1. Bu klasoru bir yere kopyala (orn: `C:\OtelKayitBuild\`)
-2. `build.bat` dosyasina **cift tikla**
-3. Siyah pencere acilacak, islemleri izle
-4. Tamamlaninca `dist\installer\OtelKayitKurulum.exe` olusacak
+A black command window will open; follow the processes.
 
----
+When finished, dist\installer\OtelKayitKurulum.exe will be created.
 
-## ADIM 4 - HEDEF BILGISAYARA KUR
+STEP 4 - INSTALL ON THE TARGET COMPUTER
+Copy the OtelKayitKurulum.exe file to a USB flash drive.
 
-1. `OtelKayitKurulum.exe` dosyasini USB bellee kopyala
-2. Hedef bilgisayarda USB'den calistir
-3. Kurulum sihirbazini takip et
-4. Bitince masaustunde "Otel Kayit Sistemi" kisayolu olusur
+Run it from the USB drive on the target computer.
 
----
+Follow the installation wizard.
 
-## ILK KULLANIM
+When finished, a shortcut named "Otel Kayit Sistemi" will appear on the desktop.
 
-- Uygulama ilk acildiginda otomatik olarak `C:\OtelKayit\` yapisi olusur
-- Ayarlar sekmesinden odalar ekle (101, 102, 103 vb.)
-- Kayit formundan ilk musteri kaydini gir
+FIRST USE
+When the application opens for the first time, the folder structure C:\OtelKayit\ is automatically created.
 
----
+Add rooms from the Settings tab (e.g., 101, 102, 103, etc.).
 
-## VERI YEDEKLEME
+Enter the first customer registration using the registration form.
 
-- `C:\OtelKayit\data\kayitlar.xlsx` tum verileri icerir
-- Ayarlar > "Simdi Yedekle" butonu ile yedek al
-- Her 30 gunde bir uygulama acilisinda hatirlatma yapar
+DATA BACKUP
+C:\OtelKayit\data\kayitlar.xlsx contains all the data.
 
----
+Take a backup using the Settings > "Backup Now" button.
 
-## SORUN GIDERME
+The application will show a reminder at startup every 30 days.
 
-**"Python bulunamadi" hatasi:**
-- Python'u "Add to PATH" secenegiyle yeniden kur
+TROUBLESHOOTING
+"Python not found" error:
 
-**"Inno Setup bulunamadi" uyarisi:**
-- Inno Setup'i kur ve build.bat'i tekrar calistir
-- Ya da setup.iss dosyasini Inno Setup ile manuel ac ve derle
+Reinstall Python and make sure to check the "Add to PATH" option.
 
-**PyQt5 import hatasi:**
-- Komut satirinda: `pip install PyQt5 --force-reinstall`
+"Inno Setup not found" warning:
 
-**Excel dosyasi acilamadi:**
-- `C:\OtelKayit\data\` klasorunun var oldugunu kontrol et
-- Baska bir program Excel dosyasini acik tutuyorsa kapat
+Install Inno Setup and run build.bat again.
+
+Alternatively, open the setup.iss file manually with Inno Setup and compile it.
+
+PyQt5 import error:
+
+Run this in the command prompt: pip install PyQt5 --force-reinstall
+
+Excel file could not be opened:
+
+Check if the C:\OtelKayit\data\ folder exists.
+
+If another program is keeping the Excel file open, close it.
