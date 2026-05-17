@@ -1,7 +1,7 @@
 [Setup]
 AppId={{F4A2B1C3-9E5D-4F8A-B2C7-3D6E9A1F0B4C}
 AppName=Otel Kayit Sistemi
-AppVersion=1.0
+AppVersion=0.4
 AppPublisher=Otel Yonetimi
 DefaultDirName=C:\OtelKayit
 DefaultGroupName=Otel Kayit Sistemi
@@ -15,7 +15,6 @@ PrivilegesRequired=lowest
 CreateUninstallRegKey=yes
 UninstallDisplayName=Otel Kayit Sistemi
 UninstallDisplayIcon={app}\app\OtelKayit.exe
-SetupIconFile=otel.ico
 
 [Languages]
 Name: "turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
@@ -32,7 +31,7 @@ Name: "{app}\config"
 Source: "dist\OtelKayit\*"; DestDir: "{app}\app"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{userdesktop}\Otel Kayit Sistemi"; Filename: "{app}\app\OtelKayit.exe"; Tasks: desktopicon; IconFilename: "{app}\app\OtelKayit.exe"
+Name: "{userdesktop}\Otel Kayit Sistemi"; Filename: "{app}\app\OtelKayit.exe"; Tasks: desktopicon
 Name: "{group}\Otel Kayit Sistemi"; Filename: "{app}\app\OtelKayit.exe"
 Name: "{group}\Kaldir"; Filename: "{uninstallexe}"
 
