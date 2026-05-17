@@ -1,15 +1,46 @@
 """
-Aktif Musteri Paneli - Stitch UI dark tema
+Aktif Musteri Paneli - v0.4
 """
 
 from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
-    QScrollArea, QFrame, QMessageBox, QDialog, QDialogButtonBox,
-    QLineEdit, QComboBox, QDateEdit, QDoubleSpinBox, QGridLayout,
-    QSizePolicy
+    QScrollArea, QFrame, QMessageBox, QDialog,
+    QLineEdit, QComboBox, QDateEdit, QDoubleSpinBox, QGridLayout
 )
 from PyQt5.QtCore import Qt, pyqtSignal, QDate
-from PyQt5.QtGui import QFont, QColor
+
+_CAL_STYLE = """
+    QDateEdit::drop-down { border: none; width: 28px; }
+    QDateEdit::down-arrow {
+        image: none; border-left: 5px solid transparent;
+        border-right: 5px solid transparent; border-top: 6px solid #38bdf8; margin-right: 8px;
+    }
+    QCalendarWidget { background-color: #ffffff; color: #1e293b; }
+    QCalendarWidget QWidget { background-color: #ffffff; color: #1e293b; alternate-background-color: #f8fafc; }
+    QCalendarWidget QAbstractItemView { background-color: #ffffff; color: #1e293b; selection-background-color: #eff6ff; selection-color: #1e293b; }
+    QCalendarWidget QAbstractItemView:enabled { background-color: #ffffff; color: #1e293b; }
+    QCalendarWidget QAbstractItemView:disabled { color: #cbd5e1; }
+    QCalendarWidget QToolButton { background-color: #ffffff; color: #1e293b; border: none; padding: 4px 8px; font-weight: bold; }
+    QCalendarWidget QToolButton:hover { background-color: #f1f5f9; border-radius: 4px; }
+    QCalendarWidget QMenu { background-color: #ffffff; color: #1e293b; }
+    QCalendarWidget QSpinBox { background-color: #ffffff; color: #1e293b; border: 1px solid #e2e8f0; }
+    QCalendarWidget QWidget#qt_calendar_navigationbar { background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+"""
+
+_COMBO_STYLE = """
+    QComboBox::drop-down { border: none; width: 28px; }
+    QComboBox::down-arrow {
+        image: none; border-left: 5px solid transparent;
+        border-right: 5px solid transparent; border-top: 6px solid #38bdf8; margin-right: 8px;
+    }
+    QComboBox QAbstractItemView {
+        background-color: #ffffff; border: 1.5px solid #e2e8f0; color: #1e293b;
+        selection-background-color: #f1f5f9; selection-color: #0f172a; outline: none;
+    }
+    QComboBox QAbstractItemView::item { background-color: #ffffff; color: #1e293b; padding: 9px 14px; min-height: 20px; }
+    QComboBox QAbstractItemView::item:hover { background-color: #f1f5f9; color: #0f172a; }
+    QComboBox QAbstractItemView::item:selected { background-color: #f1f5f9; color: #0f172a; }
+"""
 
 
 class DuzenleDialog(QDialog):
@@ -18,81 +49,74 @@ class DuzenleDialog(QDialog):
         self.musteri = musteri
         self.dm = data_manager
         self.setWindowTitle(f"Duzenle - {musteri.get('isim','')} {musteri.get('soyisim','')}")
-        self.setMinimumWidth(460)
+        self.setMinimumWidth(480)
         self.setModal(True)
         self.setStyleSheet("""
-            QDialog { background-color: #1a2635; }
-            QLabel { color: #94a3b8; }
+            QDialog { background-color: #ffffff; }
+            QLabel { color: #64748b; font-size: 8pt; font-weight: bold; letter-spacing: 0.5px; }
             QLineEdit, QComboBox, QDateEdit, QDoubleSpinBox {
-                background-color: #131f2e;
-                border: 1.5px solid #2a3a4a;
-                border-radius: 8px;
-                padding: 8px 12px;
-                color: #e2e8f0;
-                min-height: 22px;
+                background-color: #ffffff; border: 1.5px solid #e2e8f0;
+                border-radius: 8px; padding: 9px 12px; color: #1e293b; min-height: 22px;
             }
-            QLineEdit:focus, QComboBox:focus, QDateEdit:focus {
-                border-color: #22c55e;
-            }
-            QPushButton {
-                border-radius: 8px;
-                padding: 8px 20px;
-                font-weight: bold;
-                min-height: 36px;
-                border: none;
-            }
-            QComboBox QAbstractItemView {
-                background-color: #1a2635;
-                color: #e2e8f0;
-                selection-background-color: #22c55e22;
-            }
+            QLineEdit:focus, QComboBox:focus, QDateEdit:focus { border-color: #2563eb; }
+            QPushButton { border-radius: 8px; padding: 9px 20px; font-weight: 600; min-height: 38px; border: none; }
         """)
         self._setup_ui()
 
     def _setup_ui(self):
         layout = QVBoxLayout(self)
         layout.setSpacing(12)
-        layout.setContentsMargins(24, 24, 24, 24)
+        layout.setContentsMargins(28, 24, 28, 24)
 
-        baslik = QLabel("Kayit Duzenleme")
-        baslik.setStyleSheet("font-size: 13pt; font-weight: bold; color: #f1f5f9;")
-        layout.addWidget(baslik)
+        title = QLabel("Kayit Duzenleme")
+        title.setStyleSheet("font-size: 15pt; font-weight: bold; color: #0f172a;")
+        layout.addWidget(title)
 
         grid = QGridLayout()
         grid.setSpacing(10)
-        grid.setColumnMinimumWidth(0, 130)
+        grid.setColumnMinimumWidth(0, 140)
 
-        def add_row(row, label, widget):
-            lbl = QLabel(label)
-            lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-            grid.addWidget(lbl, row, 0)
-            grid.addWidget(widget, row, 1)
+        def lbl(t):
+            l = QLabel(t)
+            l.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            return l
 
         self.tc_edit = QLineEdit(str(self.musteri.get('tc', '')))
         self.tc_edit.setMaxLength(11)
-        add_row(0, "T.C. Kimlik No:", self.tc_edit)
+        grid.addWidget(lbl("T.C. KIMLIK NO"), 0, 0)
+        grid.addWidget(self.tc_edit, 0, 1)
 
         self.isim_edit = QLineEdit(str(self.musteri.get('isim', '')))
-        add_row(1, "Isim:", self.isim_edit)
+        grid.addWidget(lbl("AD"), 1, 0)
+        grid.addWidget(self.isim_edit, 1, 1)
 
         self.soyisim_edit = QLineEdit(str(self.musteri.get('soyisim', '')))
-        add_row(2, "Soyisim:", self.soyisim_edit)
+        grid.addWidget(lbl("SOYAD"), 2, 0)
+        grid.addWidget(self.soyisim_edit, 2, 1)
+
+        self.sirket_edit = QLineEdit(str(self.musteri.get('sirket', '') or ''))
+        self.sirket_edit.setPlaceholderText("Opsiyonel")
+        grid.addWidget(lbl("SIRKET ISMI"), 3, 0)
+        grid.addWidget(self.sirket_edit, 3, 1)
 
         self.oda_combo = QComboBox()
+        self.oda_combo.setStyleSheet(_COMBO_STYLE)
         musait = self.dm.get_musait_odalar()
         mevcut_oda = str(self.musteri.get('oda', ''))
-        tum_odalar = [mevcut_oda] + [o for o in musait if o != mevcut_oda]
-        for oda in sorted(tum_odalar, key=lambda x: int(x) if x.isdigit() else x):
+        tum = [mevcut_oda] + [o for o in musait if o != mevcut_oda]
+        for oda in sorted(tum, key=lambda x: int(x) if x.isdigit() else x):
             self.oda_combo.addItem(f"Oda {oda}", oda)
         for i in range(self.oda_combo.count()):
             if self.oda_combo.itemData(i) == mevcut_oda:
                 self.oda_combo.setCurrentIndex(i)
                 break
-        add_row(3, "Oda Numarasi:", self.oda_combo)
+        grid.addWidget(lbl("ODA NUMARASI"), 4, 0)
+        grid.addWidget(self.oda_combo, 4, 1)
 
         self.giris_date = QDateEdit()
         self.giris_date.setCalendarPopup(True)
         self.giris_date.setDisplayFormat("dd/MM/yyyy")
+        self.giris_date.setStyleSheet(_CAL_STYLE)
         giris_str = str(self.musteri.get('giris', ''))
         if giris_str:
             try:
@@ -101,11 +125,13 @@ class DuzenleDialog(QDialog):
                 self.giris_date.setDate(QDate(dt.year, dt.month, dt.day))
             except:
                 self.giris_date.setDate(QDate.currentDate())
-        add_row(4, "Giris Tarihi:", self.giris_date)
+        grid.addWidget(lbl("GIRIS TARIHI"), 5, 0)
+        grid.addWidget(self.giris_date, 5, 1)
 
         self.cikis_date = QDateEdit()
         self.cikis_date.setCalendarPopup(True)
         self.cikis_date.setDisplayFormat("dd/MM/yyyy")
+        self.cikis_date.setStyleSheet(_CAL_STYLE)
         cikis_str = str(self.musteri.get('cikis', ''))
         if cikis_str and cikis_str.strip():
             try:
@@ -116,92 +142,82 @@ class DuzenleDialog(QDialog):
                 self.cikis_date.setDate(QDate.currentDate().addDays(1))
         else:
             self.cikis_date.setDate(QDate.currentDate().addDays(1))
-        add_row(5, "Cikis Tarihi:", self.cikis_date)
+        grid.addWidget(lbl("CIKIS TARIHI"), 6, 0)
+        grid.addWidget(self.cikis_date, 6, 1)
 
         self.odeme_yon = QComboBox()
+        self.odeme_yon.setStyleSheet(_COMBO_STYLE)
         self.odeme_yon.addItems(["Nakit", "Kredi Karti", "Banka Karti"])
-        mevcut_yon = str(self.musteri.get('odeme_yon', 'Nakit'))
-        idx = self.odeme_yon.findText(mevcut_yon)
+        idx = self.odeme_yon.findText(str(self.musteri.get('odeme_yon', 'Nakit')))
         if idx >= 0:
             self.odeme_yon.setCurrentIndex(idx)
-        add_row(6, "Odeme Yontemi:", self.odeme_yon)
+        grid.addWidget(lbl("ODEME YONTEMI"), 7, 0)
+        grid.addWidget(self.odeme_yon, 7, 1)
 
         self.odeme_tut = QDoubleSpinBox()
         self.odeme_tut.setRange(0, 999999.99)
-        self.odeme_tut.setSpecialValueText("Bos (odeme alinmadi)")
-        self.odeme_tut.setSuffix(" TL")
+        self.odeme_tut.setSpecialValueText("Odeme alinmadi")
+        self.odeme_tut.setPrefix("TL  ")
         self.odeme_tut.setDecimals(2)
-        mevcut_tut = self.musteri.get('odeme_tut')
-        if mevcut_tut:
-            try:
-                self.odeme_tut.setValue(float(str(mevcut_tut).replace(',', '.')))
-            except:
-                self.odeme_tut.setValue(0)
-        add_row(7, "Odeme Tutari:", self.odeme_tut)
+        try:
+            self.odeme_tut.setValue(float(str(self.musteri.get('odeme_tut', 0) or 0).replace(',', '.')))
+        except:
+            self.odeme_tut.setValue(0)
+        grid.addWidget(lbl("ODEME TUTARI"), 8, 0)
+        grid.addWidget(self.odeme_tut, 8, 1)
 
         layout.addLayout(grid)
 
-        btn_layout = QHBoxLayout()
-        btn_layout.addStretch()
+        btn_row = QHBoxLayout()
+        btn_row.addStretch()
 
         btn_iptal = QPushButton("Iptal")
-        btn_iptal.setStyleSheet("background-color: #1e2d3d; color: #94a3b8; border: 1px solid #2a3a4a;")
+        btn_iptal.setStyleSheet("background: #ffffff; color: #64748b; border: 1.5px solid #e2e8f0;")
         btn_iptal.clicked.connect(self.reject)
-        btn_layout.addWidget(btn_iptal)
+        btn_row.addWidget(btn_iptal)
 
         btn_kaydet = QPushButton("Kaydet")
-        btn_kaydet.setStyleSheet("background-color: #22c55e; color: #0f1923;")
+        btn_kaydet.setStyleSheet("background: rgba(37,99,235,0.10); color: #1d4ed8; border: 2px solid #2563eb;")
         btn_kaydet.clicked.connect(self._on_kaydet)
-        btn_layout.addWidget(btn_kaydet)
-
-        layout.addLayout(btn_layout)
+        btn_row.addWidget(btn_kaydet)
+        layout.addLayout(btn_row)
 
     def _on_kaydet(self):
         tc = self.tc_edit.text().strip()
         if not tc.isdigit() or len(tc) != 11:
             QMessageBox.warning(self, "Hata", "T.C. Kimlik No 11 haneli sayi olmalidir.")
             return
-
         data = {
             "tc": tc,
             "isim": self.isim_edit.text().strip().upper(),
             "soyisim": self.soyisim_edit.text().strip().upper(),
+            "sirket": self.sirket_edit.text().strip(),
             "oda": self.oda_combo.currentData(),
             "giris": self.giris_date.date().toPyDate().strftime("%d/%m/%Y"),
             "cikis": self.cikis_date.date().toPyDate().strftime("%d/%m/%Y"),
             "odeme_yon": self.odeme_yon.currentText(),
             "odeme_tut": self.odeme_tut.value() if self.odeme_tut.value() > 0 else ""
         }
-
-        success = self.dm.kayit_guncelle(self.musteri["id"], self.musteri["sheet"], data)
-        if success:
+        if self.dm.kayit_guncelle(self.musteri["id"], self.musteri["sheet"], data):
             self.accept()
         else:
             QMessageBox.critical(self, "Hata", "Kayit guncellenemedi.")
 
 
 class AvatarWidget(QLabel):
-    """Isim baş harflerinden avatar"""
     def __init__(self, isim, soyisim, parent=None):
         super().__init__(parent)
         initials = f"{isim[:1]}{soyisim[:1]}".upper() if isim and soyisim else "?"
         self.setText(initials)
-        self.setFixedSize(44, 44)
+        self.setFixedSize(46, 46)
         self.setAlignment(Qt.AlignCenter)
-        self.setStyleSheet("""
-            QLabel {
-                background-color: #2a3a4a;
-                color: #94a3b8;
-                border-radius: 22px;
-                font-size: 13pt;
-                font-weight: bold;
-            }
-        """)
+        self.setStyleSheet("QLabel { background-color: #e2e8f0; color: #475569; border-radius: 23px; font-size: 13pt; font-weight: bold; }")
 
 
 class MusteriKarti(QFrame):
     duzenle_clicked = pyqtSignal(dict)
     cikis_clicked = pyqtSignal(dict)
+    sil_clicked = pyqtSignal(dict)
 
     def __init__(self, musteri, parent=None):
         super().__init__(parent)
@@ -212,66 +228,80 @@ class MusteriKarti(QFrame):
 
     def _setup_ui(self):
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(14, 12, 14, 12)
+        layout.setContentsMargins(16, 14, 16, 14)
         layout.setSpacing(14)
 
-        # Avatar
         isim = str(self.musteri.get('isim', ''))
         soyisim = str(self.musteri.get('soyisim', ''))
+        sirket = str(self.musteri.get('sirket', '') or '')
+
         avatar = AvatarWidget(isim, soyisim)
         layout.addWidget(avatar)
 
-        # Orta: bilgiler
-        info_col = QVBoxLayout()
-        info_col.setSpacing(4)
+        info = QVBoxLayout()
+        info.setSpacing(3)
 
         isim_lbl = QLabel(f"{isim} {soyisim}")
         isim_lbl.setObjectName("musteriIsim")
-        info_col.addWidget(isim_lbl)
+        info.addWidget(isim_lbl)
 
-        oda = self.musteri.get('oda', '')
-        giris = self.musteri.get('giris', '')
-        cikis = self.musteri.get('cikis', '') or 'Belirtilmedi'
-        alt_lbl = QLabel(f"Oda {oda}   •   {giris} - {cikis}")
-        alt_lbl.setObjectName("musteriTarih")
-        info_col.addWidget(alt_lbl)
+        if sirket:
+            sirket_lbl = QLabel(sirket)
+            sirket_lbl.setStyleSheet("color: #64748b; font-size: 9pt; font-style: italic;")
+            info.addWidget(sirket_lbl)
 
-        layout.addLayout(info_col)
+        oda = str(self.musteri.get('oda', ''))
+        giris = str(self.musteri.get('giris', ''))
+        cikis = str(self.musteri.get('cikis', '') or 'Belirtilmedi')
+
+        alt_row = QHBoxLayout()
+        alt_row.setSpacing(8)
+        oda_lbl = QLabel(f"Oda {oda}")
+        oda_lbl.setObjectName("musteriOda")
+        alt_row.addWidget(oda_lbl)
+        tarih_lbl = QLabel(f"  •  {giris} - {cikis}")
+        tarih_lbl.setObjectName("musteriTarih")
+        alt_row.addWidget(tarih_lbl)
+        alt_row.addStretch()
+        info.addLayout(alt_row)
+        layout.addLayout(info)
         layout.addStretch()
 
-        # Sag: odeme badge + butonlar
-        sag_col = QVBoxLayout()
-        sag_col.setSpacing(8)
-        sag_col.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        sag = QVBoxLayout()
+        sag.setSpacing(8)
+        sag.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 
-        # Odeme badge
         odeme_tut = self.musteri.get('odeme_tut')
-        odeme_yon = self.musteri.get('odeme_yon', '')
-        if odeme_tut and str(odeme_tut).strip() and str(odeme_tut) not in ['0', '0.0']:
+        if odeme_tut and str(odeme_tut).strip() not in ['', '0', '0.0']:
             badge = QLabel("ODENDI")
             badge.setObjectName("odemeVar")
         else:
             badge = QLabel("EKSIK ODEME")
             badge.setObjectName("odemeUyari")
         badge.setAlignment(Qt.AlignCenter)
-        sag_col.addWidget(badge)
+        sag.addWidget(badge)
 
-        # Butonlar
         btn_row = QHBoxLayout()
-        btn_row.setSpacing(8)
+        btn_row.setSpacing(6)
 
         btn_duzenle = QPushButton("Duzenle")
         btn_duzenle.setObjectName("btnDuzenle")
         btn_duzenle.clicked.connect(lambda: self.duzenle_clicked.emit(self.musteri))
         btn_row.addWidget(btn_duzenle)
 
-        btn_cikis = QPushButton("Cikis Yap")
+        btn_cikis = QPushButton("Check-out")
         btn_cikis.setObjectName("btnCikis")
         btn_cikis.clicked.connect(lambda: self.cikis_clicked.emit(self.musteri))
         btn_row.addWidget(btn_cikis)
 
-        sag_col.addLayout(btn_row)
-        layout.addLayout(sag_col)
+        btn_sil = QPushButton("Sil")
+        btn_sil.setObjectName("btnSil")
+        btn_sil.setFixedWidth(50)
+        btn_sil.clicked.connect(lambda: self.sil_clicked.emit(self.musteri))
+        btn_row.addWidget(btn_sil)
+
+        sag.addLayout(btn_row)
+        layout.addLayout(sag)
 
 
 class AktifMusteriPaneli(QWidget):
@@ -288,46 +318,30 @@ class AktifMusteriPaneli(QWidget):
         main_layout.setContentsMargins(0, 0, 0, 0)
 
         card = QFrame()
-        card.setFrameShape(QFrame.StyledPanel)
-        card.setStyleSheet("""
-            QFrame {
-                background-color: #1a2635;
-                border-radius: 12px;
-                border: 1px solid #1e2d3d;
-            }
-        """)
+        card.setObjectName("mainCard")
         card_layout = QVBoxLayout(card)
-        card_layout.setContentsMargins(16, 16, 16, 16)
-        card_layout.setSpacing(8)
+        card_layout.setContentsMargins(24, 20, 24, 20)
+        card_layout.setSpacing(10)
         main_layout.addWidget(card)
 
-        # Baslik satiri
         baslik_row = QHBoxLayout()
+        col = QVBoxLayout()
+        col.setSpacing(2)
         baslik = QLabel("Aktif Misafirler")
         baslik.setObjectName("panelTitle")
-        baslik_row.addWidget(baslik)
+        col.addWidget(baslik)
+        self.subtitle_lbl = QLabel("Otelde konaklamakta olan misafirler")
+        self.subtitle_lbl.setObjectName("panelSubtitle")
+        col.addWidget(self.subtitle_lbl)
+        baslik_row.addLayout(col)
         baslik_row.addStretch()
-
-        self.sayac_badge = QLabel("0 ODA DOLU")
-        self.sayac_badge.setStyleSheet("""
-            QLabel {
-                background-color: #22c55e22;
-                color: #22c55e;
-                border-radius: 4px;
-                padding: 3px 10px;
-                font-size: 9pt;
-                font-weight: bold;
-            }
-        """)
-        baslik_row.addWidget(self.sayac_badge)
         card_layout.addLayout(baslik_row)
 
         sep = QFrame()
-        sep.setFrameShape(QFrame.HLine)
-        sep.setStyleSheet("color: #1e2d3d; background-color: #1e2d3d; max-height: 1px;")
+        sep.setFixedHeight(1)
+        sep.setStyleSheet("background-color: #f1f5f9;")
         card_layout.addWidget(sep)
 
-        # Scroll area
         self.scroll = QScrollArea()
         self.scroll.setWidgetResizable(True)
         self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
@@ -339,17 +353,9 @@ class AktifMusteriPaneli(QWidget):
         self.scroll_widget.setStyleSheet("background: transparent;")
         self.scroll_layout = QVBoxLayout(self.scroll_widget)
         self.scroll_layout.setContentsMargins(0, 0, 0, 0)
-        self.scroll_layout.setSpacing(8)
+        self.scroll_layout.setSpacing(6)
         self.scroll_layout.addStretch()
         self.scroll.setWidget(self.scroll_widget)
-
-        # Alt bilgi satiri
-        alt_row = QHBoxLayout()
-        self.toplam_lbl = QLabel("Toplam: 0 Misafir")
-        self.toplam_lbl.setStyleSheet("color: #64748b; font-size: 9pt;")
-        alt_row.addWidget(self.toplam_lbl)
-        alt_row.addStretch()
-        card_layout.addLayout(alt_row)
 
     def refresh(self):
         while self.scroll_layout.count() > 1:
@@ -358,22 +364,20 @@ class AktifMusteriPaneli(QWidget):
                 item.widget().deleteLater()
 
         musteriler = self.dm.get_aktif_musteriler()
-        count = len(musteriler)
-        self.sayac_badge.setText(f"{count} ODA DOLU")
-        self.toplam_lbl.setText(f"Toplam: {count} Misafir")
+        self.subtitle_lbl.setText(f"Otelde konaklamakta olan {len(musteriler)} misafir")
 
         if not musteriler:
-            bos_lbl = QLabel("Su an aktif misafir bulunmuyor.")
-            bos_lbl.setObjectName("bosaMessaj")
-            bos_lbl.setAlignment(Qt.AlignCenter)
-            bos_lbl.setStyleSheet("color: #2a3a4a; font-size: 12pt; padding: 40px;")
-            self.scroll_layout.insertWidget(0, bos_lbl)
+            bos = QLabel("Su an aktif misafir bulunmuyor.")
+            bos.setAlignment(Qt.AlignCenter)
+            bos.setStyleSheet("color: #cbd5e1; font-size: 12pt; padding: 50px;")
+            self.scroll_layout.insertWidget(0, bos)
             return
 
         for m in musteriler:
             kart = MusteriKarti(m)
             kart.duzenle_clicked.connect(self._on_duzenle)
             kart.cikis_clicked.connect(self._on_cikis)
+            kart.sil_clicked.connect(self._on_sil)
             self.scroll_layout.insertWidget(self.scroll_layout.count() - 1, kart)
 
     def _on_duzenle(self, musteri):
@@ -383,16 +387,22 @@ class AktifMusteriPaneli(QWidget):
 
     def _on_cikis(self, musteri):
         isim = f"{musteri.get('isim','')} {musteri.get('soyisim','')}"
-        reply = QMessageBox.question(
-            self, "Cikis Onayi",
-            f"{isim} misafirine cikis yaptirmak istiyor musunuz?\n\n"
-            f"Oda {musteri.get('oda','')} musait durumuna gececektir.",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
-        )
+        reply = QMessageBox.question(self, "Check-out Onayi",
+            f"{isim} icin check-out yapilsin mi?\nOda {musteri.get('oda','')} musait olacak.",
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
-            success = self.dm.cikis_yaptir(musteri["id"], musteri["sheet"])
-            if success:
+            if self.dm.cikis_yaptir(musteri["id"], musteri["sheet"]):
                 self.guncelleme_gerekli.emit()
             else:
-                QMessageBox.critical(self, "Hata", "Cikis islemi gerceklestirilemedi.")
+                QMessageBox.critical(self, "Hata", "Check-out islemi basarisiz.")
+
+    def _on_sil(self, musteri):
+        isim = f"{musteri.get('isim','')} {musteri.get('soyisim','')}"
+        reply = QMessageBox.question(self, "Kayit Silme",
+            f"{isim} kaydini kalici olarak silmek istiyor musunuz?\n\nBu islem geri alinamaz!",
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            if self.dm.kayit_sil(musteri["id"], musteri["sheet"]):
+                self.guncelleme_gerekli.emit()
+            else:
+                QMessageBox.critical(self, "Hata", "Silme islemi basarisiz.")

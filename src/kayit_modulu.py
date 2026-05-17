@@ -1,6 +1,6 @@
 """
-Kayit Modulu - Yeni musteri kaydi formu
-Autocomplete, validasyon ve kayit islemi
+Kayit Modulu - v0.4
+Yeni: Rezerve Et, Sirket Ismi, Blacklist kontrolu
 """
 
 from PyQt5.QtWidgets import (
@@ -8,39 +8,67 @@ from PyQt5.QtWidgets import (
     QComboBox, QPushButton, QDateEdit, QDoubleSpinBox,
     QFrame, QListWidget, QListWidgetItem, QMessageBox, QSizePolicy
 )
-from PyQt5.QtCore import Qt, QDate, pyqtSignal, QPoint
-from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt, QDate, pyqtSignal, QPoint, QTimer
+
+
+_CAL_STYLE = """
+    QDateEdit::drop-down { border: none; width: 28px; }
+    QDateEdit::down-arrow {
+        image: none;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 6px solid #38bdf8;
+        margin-right: 8px;
+    }
+    QCalendarWidget { background-color: #ffffff; color: #1e293b; }
+    QCalendarWidget QWidget { background-color: #ffffff; color: #1e293b; alternate-background-color: #f8fafc; }
+    QCalendarWidget QAbstractItemView { background-color: #ffffff; color: #1e293b; selection-background-color: #eff6ff; selection-color: #1e293b; }
+    QCalendarWidget QAbstractItemView:enabled { background-color: #ffffff; color: #1e293b; }
+    QCalendarWidget QAbstractItemView:disabled { color: #cbd5e1; }
+    QCalendarWidget QToolButton { background-color: #ffffff; color: #1e293b; border: none; padding: 4px 8px; font-weight: bold; }
+    QCalendarWidget QToolButton:hover { background-color: #f1f5f9; border-radius: 4px; }
+    QCalendarWidget QMenu { background-color: #ffffff; color: #1e293b; }
+    QCalendarWidget QSpinBox { background-color: #ffffff; color: #1e293b; border: 1px solid #e2e8f0; }
+    QCalendarWidget QWidget#qt_calendar_navigationbar { background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+"""
+
+_COMBO_STYLE = """
+    QComboBox::drop-down { border: none; width: 28px; }
+    QComboBox::down-arrow {
+        image: none;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 6px solid #38bdf8;
+        margin-right: 8px;
+    }
+    QComboBox QAbstractItemView {
+        background-color: #ffffff; border: 1.5px solid #e2e8f0;
+        color: #1e293b; selection-background-color: #f1f5f9;
+        selection-color: #0f172a; outline: none;
+    }
+    QComboBox QAbstractItemView::item {
+        background-color: #ffffff; color: #1e293b; padding: 9px 14px; min-height: 20px;
+    }
+    QComboBox QAbstractItemView::item:hover { background-color: #f1f5f9; color: #0f172a; }
+    QComboBox QAbstractItemView::item:selected { background-color: #f1f5f9; color: #0f172a; }
+"""
 
 
 class AutocompleteLineEdit(QLineEdit):
-    """Autocomplete ozelligi olan arama alani"""
     oneri_secildi = pyqtSignal(dict)
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self._data = []
-
-        # Popup listesi - parent olarak None, Popup flag ile
         self._popup = QListWidget(None)
         self._popup.setWindowFlags(Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self._popup.setFocusPolicy(Qt.NoFocus)
         self._popup.setMouseTracking(True)
         self._popup.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self._popup.setStyleSheet("""
-            QListWidget {
-                border: 2px solid #2563EB;
-                border-radius: 6px;
-                background: white;
-                font-size: 10pt;
-            }
-            QListWidget::item {
-                padding: 8px 12px;
-                border-bottom: 1px solid #f1f5f9;
-            }
-            QListWidget::item:hover, QListWidget::item:selected {
-                background: #dbeafe;
-                color: #1e40af;
-            }
+            QListWidget { border: 1.5px solid #e2e8f0; border-radius: 8px; background: white; font-size: 10pt; }
+            QListWidget::item { padding: 9px 14px; border-bottom: 1px solid #f8fafc; color: #1e293b; }
+            QListWidget::item:hover, QListWidget::item:selected { background: #eff6ff; color: #1e293b; }
         """)
         self._popup.itemClicked.connect(self._on_item_selected)
         self.textChanged.connect(self._on_text_changed)
@@ -51,24 +79,14 @@ class AutocompleteLineEdit(QLineEdit):
     def _show_popup(self, matches):
         self._popup.clear()
         for m in matches[:8]:
-            isim = m.get('isim', '')
-            soyisim = m.get('soyisim', '')
-            tc = m.get('tc', '')
-            oda = m.get('oda', '')
-            display = f"{isim} {soyisim}   |   TC: {tc}   |   Son Oda: {oda}"
+            display = f"{m.get('isim','')} {m.get('soyisim','')}   |   TC: {m.get('tc','')}   |   Son Oda: {m.get('oda','')}"
             item = QListWidgetItem(display)
             item.setData(Qt.UserRole, m)
             self._popup.addItem(item)
-
-        # Pozisyon hesapla - widget'in sol alt kosesi
-        global_pos = self.mapToGlobal(QPoint(0, self.height()))
-        self._popup.move(global_pos)
-        self._popup.setFixedWidth(max(self.width(), 500))
-
-        # Yuksekligi oge sayisina gore ayarla
-        item_height = 36
-        total_height = min(len(matches), 8) * item_height + 4
-        self._popup.setFixedHeight(total_height)
+        pos = self.mapToGlobal(QPoint(0, self.height()))
+        self._popup.move(pos)
+        self._popup.setFixedWidth(max(self.width(), 480))
+        self._popup.setFixedHeight(min(len(matches), 8) * 38 + 4)
         self._popup.show()
         self._popup.raise_()
 
@@ -76,19 +94,13 @@ class AutocompleteLineEdit(QLineEdit):
         if len(text) < 2:
             self._popup.hide()
             return
-
-        text_lower = text.lower()
-        matches = []
-        for item in self._data:
-            full_name = f"{item.get('isim', '')} {item.get('soyisim', '')}".lower()
-            tc = str(item.get('tc', '')).lower()
-            if text_lower in full_name or text_lower in tc:
-                matches.append(item)
-
+        tl = text.lower()
+        matches = [i for i in self._data if
+                   tl in f"{i.get('isim','')} {i.get('soyisim','')}".lower() or
+                   tl in str(i.get('tc','')).lower()]
         if not matches:
             self._popup.hide()
             return
-
         self._show_popup(matches)
 
     def _on_item_selected(self, item):
@@ -98,8 +110,6 @@ class AutocompleteLineEdit(QLineEdit):
             self.oneri_secildi.emit(data)
 
     def focusOutEvent(self, event):
-        # Kisa gecikme ile kapat - tiklama olayinin islenmesi icin
-        from PyQt5.QtCore import QTimer
         QTimer.singleShot(150, self._popup.hide)
         super().focusOutEvent(event)
 
@@ -109,9 +119,9 @@ class AutocompleteLineEdit(QLineEdit):
         elif event.key() == Qt.Key_Down and self._popup.isVisible():
             self._popup.setCurrentRow(0)
         elif event.key() == Qt.Key_Return and self._popup.isVisible():
-            current = self._popup.currentItem()
-            if current:
-                self._on_item_selected(current)
+            cur = self._popup.currentItem()
+            if cur:
+                self._on_item_selected(cur)
         else:
             super().keyPressEvent(event)
 
@@ -119,13 +129,10 @@ class AutocompleteLineEdit(QLineEdit):
         self._popup.hide()
         super().hideEvent(event)
 
-    def moveEvent(self, event):
-        self._popup.hide()
-        super().moveEvent(event)
-
 
 class KayitModulu(QWidget):
     kayit_yapildi = pyqtSignal()
+    rezervasyon_yapildi = pyqtSignal()
 
     def __init__(self, data_manager, parent=None):
         super().__init__(parent)
@@ -138,101 +145,150 @@ class KayitModulu(QWidget):
         main_layout.setContentsMargins(0, 0, 0, 0)
 
         card = QFrame()
-        card.setFrameShape(QFrame.StyledPanel)
-        card.setStyleSheet("""
-            QFrame {
-                background: white;
-                border-radius: 12px;
-                border: 1px solid #e2e8f0;
-            }
-        """)
+        card.setObjectName("mainCard")
         card_layout = QVBoxLayout(card)
-        card_layout.setContentsMargins(20, 16, 20, 20)
-        card_layout.setSpacing(10)
+        card_layout.setContentsMargins(28, 24, 28, 28)
+        card_layout.setSpacing(0)
         main_layout.addWidget(card)
 
-        baslik = QLabel("Yeni Misafir Kaydi")
-        baslik.setObjectName("panelTitle")
-        card_layout.addWidget(baslik)
+        title = QLabel("Yeni Misafir Kaydi")
+        title.setObjectName("panelTitle")
+        card_layout.addWidget(title)
 
-        sep = QFrame()
-        sep.setFrameShape(QFrame.HLine)
-        sep.setStyleSheet("color: #e2e8f0;")
-        card_layout.addWidget(sep)
+        subtitle = QLabel("Asagidaki formu doldurarak yeni misafir kaydedebilirsiniz.")
+        subtitle.setObjectName("panelSubtitle")
+        card_layout.addWidget(subtitle)
+        card_layout.addSpacing(20)
 
         self._add_form_fields(card_layout)
+        card_layout.addSpacing(20)
 
+        # Butonlar: Kaydet | Rezerve Et | Temizle
         btn_layout = QHBoxLayout()
-        btn_layout.setSpacing(10)
+        btn_layout.setSpacing(8)
 
         self.btn_kaydet = QPushButton("Kaydet")
         self.btn_kaydet.setObjectName("btnKaydet")
         self.btn_kaydet.clicked.connect(self._on_kaydet)
+        self.btn_kaydet.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         btn_layout.addWidget(self.btn_kaydet)
+
+        self.btn_rezerve = QPushButton("Rezerve Et")
+        self.btn_rezerve.setObjectName("btnRezarve")
+        self.btn_rezerve.clicked.connect(self._on_rezerve)
+        self.btn_rezerve.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        btn_layout.addWidget(self.btn_rezerve)
 
         self.btn_temizle = QPushButton("Temizle")
         self.btn_temizle.setObjectName("btnTemizle")
         self.btn_temizle.clicked.connect(self._temizle)
+        self.btn_temizle.setFixedWidth(100)
         btn_layout.addWidget(self.btn_temizle)
 
         card_layout.addLayout(btn_layout)
         card_layout.addStretch()
 
-    def _add_form_row(self, layout, label_text, widget, zorunlu=True):
-        row = QHBoxLayout()
-        row.setSpacing(8)
-        lbl = QLabel(label_text)
-        lbl.setFixedWidth(130)
-        lbl.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        if zorunlu:
-            lbl.setText(f"<span style='color:#dc2626'>*</span> {label_text}")
-        row.addWidget(lbl)
-        row.addWidget(widget)
-        layout.addLayout(row)
+    def _lbl(self, text):
+        l = QLabel(text)
+        l.setObjectName("formLabel")
+        return l
 
     def _add_form_fields(self, layout):
+        # TC
+        layout.addWidget(self._lbl("T.C. KIMLIK NUMARASI *"))
         self.tc_edit = AutocompleteLineEdit()
-        self.tc_edit.setPlaceholderText("11 haneli TC Kimlik No")
+        self.tc_edit.setPlaceholderText("11 haneli kimlik numarasi")
         self.tc_edit.setMaxLength(11)
         self.tc_edit.oneri_secildi.connect(self._fill_from_suggestion)
-        self._add_form_row(layout, "T.C. Kimlik No", self.tc_edit)
+        layout.addWidget(self.tc_edit)
+        layout.addSpacing(10)
 
+        # Ad | Soyad
+        row1 = QHBoxLayout()
+        row1.setSpacing(10)
+
+        c1 = QVBoxLayout(); c1.setSpacing(4)
+        c1.addWidget(self._lbl("AD *"))
         self.isim_edit = AutocompleteLineEdit()
-        self.isim_edit.setPlaceholderText("Misafirin adi")
+        self.isim_edit.setPlaceholderText("Misafir adi")
         self.isim_edit.oneri_secildi.connect(self._fill_from_suggestion)
-        self._add_form_row(layout, "Isim", self.isim_edit)
+        c1.addWidget(self.isim_edit)
+        row1.addLayout(c1)
 
+        c2 = QVBoxLayout(); c2.setSpacing(4)
+        c2.addWidget(self._lbl("SOYAD *"))
         self.soyisim_edit = AutocompleteLineEdit()
-        self.soyisim_edit.setPlaceholderText("Misafirin soyadi")
+        self.soyisim_edit.setPlaceholderText("Misafir soyadi")
         self.soyisim_edit.oneri_secildi.connect(self._fill_from_suggestion)
-        self._add_form_row(layout, "Soyisim", self.soyisim_edit)
+        c2.addWidget(self.soyisim_edit)
+        row1.addLayout(c2)
 
+        layout.addLayout(row1)
+        layout.addSpacing(10)
+
+        # Sirket ismi (tam genislik)
+        layout.addWidget(self._lbl("SIRKET ISMI"))
+        self.sirket_edit = QLineEdit()
+        self.sirket_edit.setPlaceholderText("Sirket ismi (opsiyonel)")
+        layout.addWidget(self.sirket_edit)
+        layout.addSpacing(10)
+
+        # Oda | Odeme yontemi
+        row2 = QHBoxLayout(); row2.setSpacing(10)
+
+        c3 = QVBoxLayout(); c3.setSpacing(4)
+        c3.addWidget(self._lbl("ODA NUMARASI *"))
         self.oda_combo = QComboBox()
-        self._add_form_row(layout, "Oda Numarasi", self.oda_combo)
+        self.oda_combo.setStyleSheet(_COMBO_STYLE)
+        c3.addWidget(self.oda_combo)
+        row2.addLayout(c3)
 
+        c4 = QVBoxLayout(); c4.setSpacing(4)
+        c4.addWidget(self._lbl("ODEME YONTEMI"))
+        self.odeme_combo = QComboBox()
+        self.odeme_combo.addItems(["Nakit", "Kredi Karti", "Banka Karti"])
+        self.odeme_combo.setStyleSheet(_COMBO_STYLE)
+        c4.addWidget(self.odeme_combo)
+        row2.addLayout(c4)
+
+        layout.addLayout(row2)
+        layout.addSpacing(10)
+
+        # Giris | Cikis tarihi
+        row3 = QHBoxLayout(); row3.setSpacing(10)
+
+        c5 = QVBoxLayout(); c5.setSpacing(4)
+        c5.addWidget(self._lbl("GIRIS TARIHI *"))
         self.giris_date = QDateEdit()
         self.giris_date.setCalendarPopup(True)
         self.giris_date.setDate(QDate.currentDate())
         self.giris_date.setDisplayFormat("dd/MM/yyyy")
-        self._add_form_row(layout, "Giris Tarihi", self.giris_date)
+        self.giris_date.setStyleSheet(_CAL_STYLE)
+        c5.addWidget(self.giris_date)
+        row3.addLayout(c5)
 
+        c6 = QVBoxLayout(); c6.setSpacing(4)
+        c6.addWidget(self._lbl("CIKIS TARIHI"))
         self.cikis_date = QDateEdit()
         self.cikis_date.setCalendarPopup(True)
         self.cikis_date.setDate(QDate.currentDate().addDays(1))
         self.cikis_date.setDisplayFormat("dd/MM/yyyy")
-        self._add_form_row(layout, "Cikis Tarihi", self.cikis_date, zorunlu=False)
+        self.cikis_date.setStyleSheet(_CAL_STYLE)
+        c6.addWidget(self.cikis_date)
+        row3.addLayout(c6)
 
-        self.odeme_combo = QComboBox()
-        self.odeme_combo.addItems(["Nakit", "Kredi Karti", "Banka Karti"])
-        self._add_form_row(layout, "Odeme Yontemi", self.odeme_combo)
+        layout.addLayout(row3)
+        layout.addSpacing(10)
 
+        # Tutar
+        layout.addWidget(self._lbl("TOPLAM TUTAR (TL)"))
         self.odeme_spin = QDoubleSpinBox()
         self.odeme_spin.setRange(0, 999999.99)
-        self.odeme_spin.setSpecialValueText("Bos (odeme alinmadi)")
+        self.odeme_spin.setSpecialValueText("0.00")
         self.odeme_spin.setValue(0)
-        self.odeme_spin.setSuffix(" TL")
+        self.odeme_spin.setPrefix("TL  ")
         self.odeme_spin.setDecimals(2)
-        self._add_form_row(layout, "Odeme Tutari", self.odeme_spin, zorunlu=False)
+        layout.addWidget(self.odeme_spin)
 
     def _load_data(self):
         ac_data = self.dm.get_autocomplete_data()
@@ -250,79 +306,111 @@ class KayitModulu(QWidget):
             self.oda_combo.addItem("Musait oda yok", "")
 
     def _fill_from_suggestion(self, data):
-        self.tc_edit.blockSignals(True)
-        self.isim_edit.blockSignals(True)
-        self.soyisim_edit.blockSignals(True)
-
-        self.tc_edit.setText(str(data.get("tc", "")))
-        self.isim_edit.setText(str(data.get("isim", "")))
-        self.soyisim_edit.setText(str(data.get("soyisim", "")))
-
-        son_oda = str(data.get("oda", ""))
+        for e in [self.tc_edit, self.isim_edit, self.soyisim_edit]:
+            e.blockSignals(True)
+        self.tc_edit.setText(str(data.get("tc","")))
+        self.isim_edit.setText(str(data.get("isim","")))
+        self.soyisim_edit.setText(str(data.get("soyisim","")))
+        self.sirket_edit.setText(str(data.get("sirket","") or ""))
+        son_oda = str(data.get("oda",""))
         if son_oda:
             for i in range(self.oda_combo.count()):
                 if str(self.oda_combo.itemData(i)) == son_oda:
                     self.oda_combo.setCurrentIndex(i)
                     break
+        for e in [self.tc_edit, self.isim_edit, self.soyisim_edit]:
+            e.blockSignals(False)
 
-        self.tc_edit.blockSignals(False)
-        self.isim_edit.blockSignals(False)
-        self.soyisim_edit.blockSignals(False)
+    def _get_form_data(self):
+        return {
+            "tc": self.tc_edit.text().strip(),
+            "isim": self.isim_edit.text().strip().upper(),
+            "soyisim": self.soyisim_edit.text().strip().upper(),
+            "sirket": self.sirket_edit.text().strip(),
+            "oda": self.oda_combo.currentData(),
+            "giris": self.giris_date.date().toPyDate(),
+            "cikis": self.cikis_date.date().toPyDate(),
+            "odeme_yon": self.odeme_combo.currentText(),
+            "odeme_tut": self.odeme_spin.value() if self.odeme_spin.value() > 0 else None
+        }
 
-    def _validate(self):
+    def _validate(self, data):
         errors = []
-        tc = self.tc_edit.text().strip()
-        if not tc:
+        if not data["tc"]:
             errors.append("T.C. Kimlik No zorunludur.")
-        elif not tc.isdigit() or len(tc) != 11:
+        elif not data["tc"].isdigit() or len(data["tc"]) != 11:
             errors.append("T.C. Kimlik No 11 haneli sayi olmalidir.")
-        if not self.isim_edit.text().strip():
-            errors.append("Isim zorunludur.")
-        if not self.soyisim_edit.text().strip():
-            errors.append("Soyisim zorunludur.")
-        if not self.oda_combo.currentData():
+        if not data["isim"]:
+            errors.append("Ad zorunludur.")
+        if not data["soyisim"]:
+            errors.append("Soyad zorunludur.")
+        if not data["oda"]:
             errors.append("Lutfen musait bir oda secin.")
         return errors
 
     def _on_kaydet(self):
-        errors = self._validate()
+        data = self._get_form_data()
+        errors = self._validate(data)
         if errors:
             QMessageBox.warning(self, "Eksik Bilgi", "\n".join(errors))
             return
-
-        tc = self.tc_edit.text().strip()
-        isim = self.isim_edit.text().strip().upper()
-        soyisim = self.soyisim_edit.text().strip().upper()
-        oda = self.oda_combo.currentData()
-        giris = self.giris_date.date().toPyDate()
-        cikis = self.cikis_date.date().toPyDate()
-        odeme_yon = self.odeme_combo.currentText()
-        odeme_tut = self.odeme_spin.value() if self.odeme_spin.value() > 0 else None
-
+        # Blacklist kontrolu
+        if self.dm.blacklist_kontrol(data["tc"]):
+            QMessageBox.critical(self, "Kara Liste Uyarisi",
+                "Bu kisi Kara Liste'de!\n\nKayit islemi iptal edildi.")
+            return
         try:
-            kayit_id = self.dm.kayit_ekle(tc, isim, soyisim, oda, giris, cikis, odeme_yon, odeme_tut)
-            QMessageBox.information(
-                self, "Basarili",
-                f"Kayit basariyla olusturuldu!\n\nKayit ID: {kayit_id}\n"
-                f"Misafir: {isim} {soyisim}\nOda: {oda}"
+            kid = self.dm.kayit_ekle(
+                data["tc"], data["isim"], data["soyisim"], data["sirket"],
+                data["oda"], data["giris"], data["cikis"],
+                data["odeme_yon"], data["odeme_tut"]
             )
+            QMessageBox.information(self, "Basarili",
+                f"Kayit olusturuldu!\nID: {kid}\n"
+                f"Misafir: {data['isim']} {data['soyisim']}\nOda: {data['oda']}")
             self._temizle()
             self.kayit_yapildi.emit()
         except Exception as e:
-            QMessageBox.critical(self, "Hata", f"Kayit sirasinda hata olustu:\n{str(e)}")
+            QMessageBox.critical(self, "Hata", f"Kayit hatasi:\n{str(e)}")
+
+    def _on_rezerve(self):
+        data = self._get_form_data()
+        errors = self._validate(data)
+        if errors:
+            QMessageBox.warning(self, "Eksik Bilgi", "\n".join(errors))
+            return
+        if self.dm.blacklist_kontrol(data["tc"]):
+            QMessageBox.critical(self, "Kara Liste Uyarisi",
+                "Bu kisi Kara Liste'de!\n\nRezervasyon islemi iptal edildi.")
+            return
+        try:
+            rid = self.dm.rezervasyon_ekle(
+                data["tc"], data["isim"], data["soyisim"], data["sirket"],
+                data["oda"], data["giris"], data["cikis"],
+                data["odeme_yon"], data["odeme_tut"]
+            )
+            QMessageBox.information(self, "Rezervasyon Olusturuldu",
+                f"Rezervasyon kaydedildi!\nRez. ID: {rid}\n"
+                f"Misafir: {data['isim']} {data['soyisim']}\n"
+                f"Giris Tarihi: {data['giris'].strftime('%d/%m/%Y')}")
+            self._temizle()
+            self.rezervasyon_yapildi.emit()
+        except Exception as e:
+            QMessageBox.critical(self, "Hata", f"Rezervasyon hatasi:\n{str(e)}")
 
     def _temizle(self):
         self.tc_edit.clear()
         self.isim_edit.clear()
         self.soyisim_edit.clear()
+        self.sirket_edit.clear()
         self.giris_date.setDate(QDate.currentDate())
         self.cikis_date.setDate(QDate.currentDate().addDays(1))
         self.odeme_combo.setCurrentIndex(0)
         self.odeme_spin.setValue(0)
         self.refresh_oda_listesi()
         ac_data = self.dm.get_autocomplete_data()
-        for edit in [self.tc_edit, self.isim_edit, self.soyisim_edit]:
-            edit.set_data(ac_data)
+        for e in [self.tc_edit, self.isim_edit, self.soyisim_edit]:
+            e.set_data(ac_data)
 
     def refresh(self):
         self._load_data()
