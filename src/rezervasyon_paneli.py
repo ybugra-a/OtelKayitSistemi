@@ -40,7 +40,7 @@ class RezervasyonKarti(QFrame):
         avatar.setAlignment(Qt.AlignCenter)
         avatar.setStyleSheet("""
             QLabel {
-                background-color: #fde68a; color: #92400e;
+                background-color: #3a3050; color: #a78bfa;
                 border-radius: 23px; font-size: 13pt; font-weight: bold;
             }
         """)
@@ -55,7 +55,7 @@ class RezervasyonKarti(QFrame):
 
         if sirket:
             sirket_lbl = QLabel(sirket)
-            sirket_lbl.setStyleSheet("color: #92400e; font-size: 9pt; font-style: italic;")
+            sirket_lbl.setStyleSheet("color: #a78bfa; font-size: 9pt; font-style: italic; background: transparent;")
             info.addWidget(sirket_lbl)
 
         alt_row = QHBoxLayout()
@@ -144,7 +144,7 @@ class RezervasyonPaneli(QWidget):
 
         sep = QFrame()
         sep.setFixedHeight(1)
-        sep.setStyleSheet("background-color: #f1f5f9;")
+        sep.setStyleSheet("background-color: #2a2a3e;")
         card_layout.addWidget(sep)
 
         self.scroll = QScrollArea()
@@ -174,7 +174,7 @@ class RezervasyonPaneli(QWidget):
         if not rezervasyonlar:
             bos = QLabel("Su an bekleyen rezervasyon bulunmuyor.")
             bos.setAlignment(Qt.AlignCenter)
-            bos.setStyleSheet("color: #cbd5e1; font-size: 12pt; padding: 50px;")
+            bos.setStyleSheet("color: #3a3a50; font-size: 12pt; padding: 50px; background: transparent;")
             self.scroll_layout.insertWidget(0, bos)
             return
 

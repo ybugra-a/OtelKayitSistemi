@@ -136,11 +136,11 @@ class OtelKayitApp(QMainWindow):
         progress.setTextVisible(False)
         progress.setValue(0)
         if is_green:
-            progress.setStyleSheet("QProgressBar { background: #f0fdf4; border-radius: 3px; } QProgressBar::chunk { background: #22c55e; border-radius: 3px; }")
+            progress.setStyleSheet("QProgressBar { background: #1e1e30; border-radius: 4px; } QProgressBar::chunk { background: #22c55e; border-radius: 4px; }")
             self._stat_musait_lbl = deger_lbl
             self._stat_musait_prog = progress
         else:
-            progress.setStyleSheet("QProgressBar { background: #eff6ff; border-radius: 3px; } QProgressBar::chunk { background: #2563eb; border-radius: 3px; }")
+            progress.setStyleSheet("QProgressBar { background: #1e1e30; border-radius: 4px; } QProgressBar::chunk { background: #475569; border-radius: 4px; }")
             self._stat_dolu_lbl = deger_lbl
             self._stat_dolu_prog = progress
         layout.addWidget(progress)

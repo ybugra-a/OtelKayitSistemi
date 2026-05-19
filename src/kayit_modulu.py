@@ -66,9 +66,9 @@ class AutocompleteLineEdit(QLineEdit):
         self._popup.setMouseTracking(True)
         self._popup.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self._popup.setStyleSheet("""
-            QListWidget { border: 1.5px solid #e2e8f0; border-radius: 8px; background: white; font-size: 10pt; }
-            QListWidget::item { padding: 9px 14px; border-bottom: 1px solid #f8fafc; color: #1e293b; }
-            QListWidget::item:hover, QListWidget::item:selected { background: #eff6ff; color: #1e293b; }
+            QListWidget { border: 1.5px solid #3a3a50; border-radius: 8px; background: #252538; font-size: 10pt; }
+            QListWidget::item { padding: 9px 14px; border-bottom: 1px solid #2a2a3e; color: #e2e8f0; }
+            QListWidget::item:hover, QListWidget::item:selected { background: #2a2a3e; color: #22c55e; }
         """)
         self._popup.itemClicked.connect(self._on_item_selected)
         self.textChanged.connect(self._on_text_changed)

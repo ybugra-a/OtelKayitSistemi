@@ -168,11 +168,11 @@ class AramaArsiv(QWidget):
                 item.setData(Qt.UserRole, k)
                 if col == 10:
                     if k.get("durum") == "Aktif":
-                        item.setForeground(QColor("#16a34a"))
+                        item.setForeground(QColor("#4ade80"))
                     else:
-                        item.setForeground(QColor("#dc2626"))
+                        item.setForeground(QColor("#f87171"))
                 else:
-                    item.setForeground(QColor("#374141"))
+                    item.setForeground(QColor("#cbd5e1"))
                 self.tablo.setItem(row, col, item)
 
     def _on_sil(self):

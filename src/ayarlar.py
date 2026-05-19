@@ -92,8 +92,8 @@ class Ayarlar(QWidget):
 
         self.dosya_yolu_lbl = QLabel()
         self.dosya_yolu_lbl.setStyleSheet(
-            "background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; "
-            "padding: 6px; font-size: 9pt; color: #374151;"
+            "background: #1e1e30; border: 1px solid #3a3a50; border-radius: 6px; "
+            "padding: 6px; font-size: 9pt; color: #94a3b8;"
         )
         self.dosya_yolu_lbl.setWordWrap(True)
         yedek_layout.addWidget(self.dosya_yolu_lbl)

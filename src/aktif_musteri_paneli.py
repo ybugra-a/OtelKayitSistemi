@@ -52,13 +52,13 @@ class DuzenleDialog(QDialog):
         self.setMinimumWidth(480)
         self.setModal(True)
         self.setStyleSheet("""
-            QDialog { background-color: #ffffff; }
-            QLabel { color: #64748b; font-size: 8pt; font-weight: bold; letter-spacing: 0.5px; }
+            QDialog { background-color: #252538; }
+            QLabel { color: #94a3b8; font-size: 8pt; font-weight: bold; letter-spacing: 0.5px; }
             QLineEdit, QComboBox, QDateEdit, QDoubleSpinBox {
-                background-color: #ffffff; border: 1.5px solid #e2e8f0;
-                border-radius: 8px; padding: 9px 12px; color: #1e293b; min-height: 22px;
+                background-color: #1e1e30; border: 1.5px solid #3a3a50;
+                border-radius: 8px; padding: 9px 12px; color: #e2e8f0; min-height: 22px;
             }
-            QLineEdit:focus, QComboBox:focus, QDateEdit:focus { border-color: #2563eb; }
+            QLineEdit:focus, QComboBox:focus, QDateEdit:focus { border-color: #22c55e; }
             QPushButton { border-radius: 8px; padding: 9px 20px; font-weight: 600; min-height: 38px; border: none; }
         """)
         self._setup_ui()
@@ -69,7 +69,7 @@ class DuzenleDialog(QDialog):
         layout.setContentsMargins(28, 24, 28, 24)
 
         title = QLabel("Kayit Duzenleme")
-        title.setStyleSheet("font-size: 15pt; font-weight: bold; color: #0f172a;")
+        title.setStyleSheet("font-size: 15pt; font-weight: bold; color: #ffffff;")
         layout.addWidget(title)
 
         grid = QGridLayout()
@@ -172,12 +172,12 @@ class DuzenleDialog(QDialog):
         btn_row.addStretch()
 
         btn_iptal = QPushButton("Iptal")
-        btn_iptal.setStyleSheet("background: #ffffff; color: #64748b; border: 1.5px solid #e2e8f0;")
+        btn_iptal.setStyleSheet("background: rgba(100,116,139,0.12); color: #94a3b8; border: 2px solid #475569;")
         btn_iptal.clicked.connect(self.reject)
         btn_row.addWidget(btn_iptal)
 
         btn_kaydet = QPushButton("Kaydet")
-        btn_kaydet.setStyleSheet("background: rgba(37,99,235,0.10); color: #1d4ed8; border: 2px solid #2563eb;")
+        btn_kaydet.setStyleSheet("background: rgba(34,197,94,0.15); color: #22c55e; border: 2px solid #22c55e;")
         btn_kaydet.clicked.connect(self._on_kaydet)
         btn_row.addWidget(btn_kaydet)
         layout.addLayout(btn_row)
@@ -211,7 +211,7 @@ class AvatarWidget(QLabel):
         self.setText(initials)
         self.setFixedSize(46, 46)
         self.setAlignment(Qt.AlignCenter)
-        self.setStyleSheet("QLabel { background-color: #e2e8f0; color: #475569; border-radius: 23px; font-size: 13pt; font-weight: bold; }")
+        self.setStyleSheet("QLabel { background-color: #2a2a3e; color: #94a3b8; border-radius: 23px; font-size: 13pt; font-weight: bold; }")
 
 
 class MusteriKarti(QFrame):
@@ -247,7 +247,7 @@ class MusteriKarti(QFrame):
 
         if sirket:
             sirket_lbl = QLabel(sirket)
-            sirket_lbl.setStyleSheet("color: #64748b; font-size: 9pt; font-style: italic;")
+            sirket_lbl.setStyleSheet("color: #64748b; font-size: 9pt; font-style: italic; background: transparent;")
             info.addWidget(sirket_lbl)
 
         oda = str(self.musteri.get('oda', ''))
@@ -339,7 +339,7 @@ class AktifMusteriPaneli(QWidget):
 
         sep = QFrame()
         sep.setFixedHeight(1)
-        sep.setStyleSheet("background-color: #f1f5f9;")
+        sep.setStyleSheet("background-color: #2a2a3e;")
         card_layout.addWidget(sep)
 
         self.scroll = QScrollArea()
@@ -369,7 +369,7 @@ class AktifMusteriPaneli(QWidget):
         if not musteriler:
             bos = QLabel("Su an aktif misafir bulunmuyor.")
             bos.setAlignment(Qt.AlignCenter)
-            bos.setStyleSheet("color: #cbd5e1; font-size: 12pt; padding: 50px;")
+            bos.setStyleSheet("color: #3a3a50; font-size: 12pt; padding: 50px; background: transparent;")
             self.scroll_layout.insertWidget(0, bos)
             return
 

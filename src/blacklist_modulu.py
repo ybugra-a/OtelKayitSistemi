@@ -205,5 +205,5 @@ class BlacklistModulu(QWidget):
             for col, val in enumerate(degerler):
                 item = QTableWidgetItem(val)
                 item.setTextAlignment(Qt.AlignCenter)
-                item.setForeground(QColor("#1e293b"))
+                item.setForeground(QColor("#e2e8f0"))
                 self.tablo.setItem(row, col, item)
